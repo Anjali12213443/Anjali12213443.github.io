@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anjali Velu Ramalingam — Data Scientist</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f9f7f3;
+  --bg2: #f1ede5;
+  --bg3: #e8e2d8;
+  --ink: #141210;
+  --ink2: #2a2520;
+  --mid: #7a6f65;
+  --rule: rgba(20,18,16,0.1);
+  --accent: #1a56db;
+  --accent2: #1e40af;
+  --green: #16a34a;
+  --amber: #d97706;
+  --red: #dc2626;
+  --mono: 'DM Mono', monospace;
+  --display: 'Syne', sans-serif;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--ink); font-family:var(--sans); overflow-x:hidden; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:var(--ink);
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0.9rem 3rem;
+  border-bottom:2px solid var(--accent);
+}
+.nav-logo { font-family:var(--display); font-size:16px; font-weight:800; color:var(--bg); letter-spacing:-0.3px; }
+.nav-logo span { color:var(--accent); }
+.nav-links { display:flex; gap:2rem; list-style:none; align-items:center; }
+.nav-links a { font-family:var(--mono); font-size:11px; color:rgba(249,247,243,0.5); text-decoration:none; letter-spacing:0.06em; text-transform:uppercase; transition:color 0.2s; }
+.nav-links a:hover { color:var(--bg); }
+.nav-cta { background:var(--accent); color:var(--bg) !important; padding:6px 16px; font-weight:500 !important; }
+
+/* HERO */
+#hero {
+  min-height:100vh;
+  display:grid; grid-template-columns:1fr 1fr;
+  margin-top:50px;
+  border-bottom:1px solid var(--rule);
+}
+.hero-left {
+  padding:5rem 3rem 4rem;
+  border-right:1px solid var(--rule);
+  display:flex; flex-direction:column; justify-content:center;
+  background:var(--ink);
+  position:relative; overflow:hidden;
+}
+/* animated grid bg */
+.hero-left::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(26,86,219,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,86,219,0.08) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+.hero-tag { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:1.5rem; opacity:0; animation:fadeUp 0.6s 0.1s forwards; }
+.hero-name { font-family:var(--display); font-size:clamp(36px,4.5vw,62px); font-weight:800; line-height:0.95; letter-spacing:-1.5px; color:var(--bg); margin-bottom:1.25rem; opacity:0; animation:fadeUp 0.7s 0.25s forwards; }
+.hero-name .blue { color:var(--bg); }
+.hero-tagline { font-family:var(--mono); font-size:13px; color:rgba(249,247,243,0.5); line-height:1.8; max-width:420px; margin-bottom:2.5rem; opacity:0; animation:fadeUp 0.7s 0.4s forwards; }
+.hero-tagline strong { color:var(--bg); font-weight:500; }
+.hero-actions { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:3rem; opacity:0; animation:fadeUp 0.7s 0.55s forwards; }
+.btn-blue { display:inline-flex; align-items:center; gap:7px; padding:11px 24px; background:var(--accent); color:#fff; font-size:13px; font-weight:500; text-decoration:none; transition:background 0.2s, transform 0.2s; }
+.btn-blue:hover { background:var(--accent2); transform:translateY(-2px); }
+.btn-mono { display:inline-flex; align-items:center; gap:7px; padding:11px 24px; background:transparent; border:1px solid rgba(249,247,243,0.2); color:rgba(249,247,243,0.6); font-family:var(--mono); font-size:11px; text-decoration:none; letter-spacing:0.06em; text-transform:uppercase; transition:border-color 0.2s, color 0.2s, transform 0.2s; }
+.btn-mono:hover { border-color:var(--accent); color:var(--bg); transform:translateY(-2px); }
+
+/* LIVE STATS */
+.live-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(249,247,243,0.08); border-top:1px solid rgba(249,247,243,0.08); opacity:0; animation:fadeUp 0.7s 0.7s forwards; }
+.ls { padding:1.25rem 1rem; background:var(--ink); }
+.ls-num { font-family:var(--display); font-size:32px; font-weight:800; color:var(--accent); line-height:1; }
+.ls-label { font-family:var(--mono); font-size:9px; color:rgba(249,247,243,0.4); text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }
+
+/* HERO RIGHT — live chart */
+.hero-right {
+  padding:4rem 3rem;
+  background:var(--bg);
+  display:flex; flex-direction:column; justify-content:center; gap:2rem;
+}
+.chart-label { font-family:var(--mono); font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--mid); margin-bottom:0.75rem; }
+.chart-title { font-family:var(--display); font-size:18px; font-weight:700; color:var(--ink); margin-bottom:0.25rem; letter-spacing:-0.3px; }
+.chart-sub { font-family:var(--mono); font-size:11px; color:var(--mid); margin-bottom:1.25rem; }
+.chart-box { background:#fff; border:1px solid var(--rule); padding:1.25rem; }
+
+/* SECTIONS */
+.wrap { max-width:1160px; margin:0 auto; padding:5rem 3rem; }
+.sec-header { display:flex; align-items:center; gap:1rem; margin-bottom:3rem; padding-bottom:0.75rem; border-bottom:2px solid var(--ink); }
+.sec-num { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:0.15em; }
+.sec-title { font-family:var(--display); font-size:clamp(28px,3.5vw,44px); font-weight:800; letter-spacing:-1px; color:var(--ink); }
+.sec-rule { flex:1; height:1px; background:var(--rule); }
+
+/* DATA VIZ SECTION */
+#dataviz { background:var(--bg); border-top:1px solid var(--rule); }
+.viz-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.viz-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+.viz-card { background:#fff; border:1px solid var(--rule); padding:1.75rem; }
+.viz-card-wide { grid-column:1/3; }
+.vc-label { font-family:var(--mono); font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--mid); margin-bottom:0.5rem; }
+.vc-title { font-family:var(--display); font-size:18px; font-weight:700; color:var(--ink); margin-bottom:0.25rem; letter-spacing:-0.3px; }
+.vc-sub { font-family:var(--mono); font-size:11px; color:var(--mid); margin-bottom:1.25rem; line-height:1.5; }
+.metric-row { display:flex; gap:1.5rem; margin-bottom:1.25rem; }
+.metric-pill { background:var(--bg); border:1px solid var(--rule); padding:0.6rem 1rem; text-align:center; }
+.metric-pill-num { font-family:var(--display); font-size:22px; font-weight:700; color:var(--accent); }
+.metric-pill-label { font-family:var(--mono); font-size:9px; color:var(--mid); text-transform:uppercase; letter-spacing:0.1em; margin-top:2px; }
+
+/* SKILL BARS */
+.skill-bar-row { margin-bottom:0.9rem; }
+.sb-header { display:flex; justify-content:space-between; margin-bottom:4px; }
+.sb-name { font-family:var(--mono); font-size:11px; color:var(--ink); }
+.sb-val { font-family:var(--mono); font-size:11px; color:var(--accent); }
+.sb-track { height:4px; background:var(--bg2); border-radius:0; overflow:hidden; }
+.sb-fill { height:100%; background:var(--accent); border-radius:0; width:0; transition:width 1.2s ease; }
+
+/* ABOUT */
+#about { background:var(--bg2); border-top:1px solid var(--rule); }
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; }
+.about-text p { font-size:14px; line-height:1.9; color:var(--mid); margin-bottom:1rem; }
+.about-text p strong { color:var(--ink); font-weight:500; }
+.code-block { background:var(--ink); padding:1.5rem; margin:1.25rem 0; font-family:var(--mono); font-size:12px; line-height:1.8; color:rgba(249,247,243,0.75); border-left:3px solid var(--accent); }
+.code-block .kw { color:#93c5fd; }
+.code-block .str { color:#86efac; }
+.code-block .num { color:#fca5a5; }
+.code-block .cm { color:#6b7280; }
+
+/* EXPERIENCE */
+#experience { background:var(--bg); border-top:1px solid var(--rule); }
+.exp-list { display:flex; flex-direction:column; gap:0; border:1px solid var(--rule); }
+.exp-card {
+  display:grid; grid-template-columns:200px 1fr;
+  gap:2.5rem; padding:2rem;
+  border-bottom:1px solid var(--rule);
+  background:#fff;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.6s ease, transform 0.6s ease, background 0.2s;
+}
+.exp-card.visible { opacity:1; transform:translateY(0); }
+.exp-card:last-child { border-bottom:none; }
+.exp-card:hover { background:var(--bg); }
+.exp-period { font-family:var(--mono); font-size:10px; color:var(--accent); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:5px; }
+.exp-co { font-family:var(--display); font-size:15px; font-weight:700; color:var(--ink); margin-bottom:2px; }
+.exp-loc { font-family:var(--mono); font-size:10px; color:var(--mid); }
+.exp-right h3 { font-family:var(--display); font-size:20px; font-weight:700; color:var(--ink); margin-bottom:0.9rem; letter-spacing:-0.3px; }
+.exp-right ul { list-style:none; display:flex; flex-direction:column; gap:0.5rem; }
+.exp-right li { font-size:13px; line-height:1.7; color:var(--mid); padding-left:1.2rem; position:relative; }
+.exp-right li::before { content:'→'; position:absolute; left:0; color:var(--accent); font-size:11px; top:2px; }
+.exp-hi { color:var(--ink); font-weight:500; }
+
+/* PROJECTS */
+#projects { background:var(--bg2); border-top:1px solid var(--rule); }
+.proj-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule); }
+.proj-card {
+  background:#fff; padding:1.75rem;
+  display:flex; flex-direction:column;
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.5s ease, transform 0.5s ease, background 0.2s;
+}
+.proj-card.visible { opacity:1; transform:translateY(0); }
+.proj-card:hover { background:var(--bg); }
+.proj-card-wide { grid-column:1/3; }
+.proj-num { font-family:var(--mono); font-size:10px; color:var(--mid); letter-spacing:0.1em; margin-bottom:0.6rem; }
+.proj-card h3 { font-family:var(--display); font-size:17px; font-weight:700; color:var(--ink); margin-bottom:0.5rem; letter-spacing:-0.3px; }
+.proj-metric { font-family:var(--mono); font-size:11px; color:var(--accent); background:rgba(26,86,219,0.07); border:1px solid rgba(26,86,219,0.15); padding:3px 10px; display:inline-block; margin-bottom:0.75rem; }
+.proj-card p { font-size:12px; line-height:1.75; color:var(--mid); margin-bottom:1rem; flex:1; }
+.proj-tags { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:1rem; }
+.ptag { font-family:var(--mono); font-size:10px; padding:2px 8px; background:var(--bg2); color:var(--mid); border:1px solid var(--rule); }
+.proj-link { font-family:var(--mono); font-size:11px; color:var(--ink); text-decoration:none; text-transform:uppercase; letter-spacing:0.06em; display:inline-flex; align-items:center; gap:5px; margin-top:auto; transition:color 0.2s; }
+.proj-link:hover { color:var(--accent); }
+
+/* CERTS */
+#certifications { background:var(--bg); border-top:1px solid var(--rule); }
+.cert-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule); }
+.cert-card { background:#fff; padding:1.5rem; transition:background 0.2s; }
+.cert-card:hover { background:var(--bg); }
+.cert-icon { font-size:24px; margin-bottom:0.75rem; }
+.cert-card h4 { font-family:var(--display); font-size:14px; font-weight:700; color:var(--ink); margin-bottom:3px; }
+.cert-card p { font-family:var(--mono); font-size:10px; color:var(--mid); text-transform:uppercase; letter-spacing:0.08em; }
+
+/* CONTACT */
+#contact { background:var(--ink); border-top:2px solid var(--accent); }
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+.contact-main { }
+.contact-tag { font-family:var(--mono); font-size:10px; color:var(--accent); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.6rem; }
+.contact-h { font-family:var(--display); font-size:clamp(28px,4vw,52px); font-weight:800; letter-spacing:-1.5px; line-height:1.05; color:var(--bg); margin-bottom:0.9rem; }
+.contact-h span { color:var(--accent); }
+.contact-sub { font-size:13px; color:rgba(249,247,243,0.45); line-height:1.7; margin-bottom:2rem; }
+.clinks { display:flex; flex-direction:column; gap:0; border:1px solid rgba(249,247,243,0.1); }
+.clink { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; border-bottom:1px solid rgba(249,247,243,0.07); text-decoration:none; transition:background 0.2s; }
+.clink:last-child { border-bottom:none; }
+.clink:hover { background:rgba(26,86,219,0.1); }
+.clink-label { font-family:var(--mono); font-size:9px; color:rgba(249,247,243,0.35); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:2px; }
+.clink-val { font-size:13px; font-weight:400; color:var(--bg); }
+.clink-arrow { color:var(--accent); font-size:16px; }
+.contact-side { display:flex; flex-direction:column; gap:12px; }
+.cs-card { background:rgba(249,247,243,0.04); border:1px solid rgba(249,247,243,0.08); padding:1.5rem; flex:1; }
+.cs-label { font-family:var(--mono); font-size:9px; color:rgba(249,247,243,0.35); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px; }
+.cs-val { font-family:var(--display); font-size:24px; font-weight:800; color:var(--bg); }
+.cs-sub { font-family:var(--mono); font-size:10px; color:rgba(249,247,243,0.35); margin-top:3px; }
+
+footer { background:var(--ink); border-top:1px solid rgba(249,247,243,0.07); padding:1.25rem 3rem; display:flex; justify-content:space-between; font-family:var(--mono); font-size:10px; color:rgba(249,247,243,0.3); letter-spacing:0.06em; }
+footer a { color:rgba(249,247,243,0.3); text-decoration:none; }
+footer a:hover { color:var(--accent); }
+
+/* MARQUEE */
+.marquee-wrap { background:var(--accent); padding:9px 0; overflow:hidden; white-space:nowrap; }
+.marquee-inner { display:inline-flex; animation:marquee 24s linear infinite; }
+.marquee-item { font-family:var(--mono); font-size:11px; color:#fff; letter-spacing:0.1em; text-transform:uppercase; padding:0 2rem; opacity:0.9; }
+.msep { color:rgba(255,255,255,0.4); }
+
+/* REVEAL */
+.reveal { opacity:0; transform:translateY(20px); transition:opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+@media(max-width:900px){
+  #hero { grid-template-columns:1fr; }
+  .viz-grid,.viz-grid-3,.about-grid,.contact-grid { grid-template-columns:1fr; }
+  .viz-card-wide { grid-column:1/2; }
+  .proj-grid { grid-template-columns:1fr; }
+  .proj-card-wide { grid-column:1/2; }
+  .cert-grid { grid-template-columns:1fr 1fr; }
+  .exp-card { grid-template-columns:1fr; gap:0.5rem; }
+}
+@media(max-width:600px){
+  nav { padding:0.9rem 1.5rem; }
+  .nav-links { display:none; }
+  .hero-left,.hero-right { padding:3.5rem 1.5rem; }
+  .wrap { padding:3.5rem 1.5rem; }
+  .live-stats { grid-template-columns:1fr 1fr; }
+  footer { flex-direction:column; gap:0.5rem; text-align:center; padding:1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">AVR<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#dataviz">Data</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="mailto:anjalirams2908@gmail.com" class="nav-cta">Say Hello</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">// data_scientist.py</div>
+    <h1 class="hero-name">Anjali<br><span class="blue">Velu</span><br>Ramalingam</h1>
+    <p class="hero-tagline">
+      <strong>Data Scientist · ML Engineer · Data Engineer</strong><br>
+      2 yrs enterprise experience · MS Data Science &amp; Analytics<br>
+      AI Minor · GPA 3.93 · FAU 2026 · Delray Beach, FL
+    </p>
+    <div class="hero-actions">
+      <a class="btn-blue" href="#dataviz">Explore my data ↓</a>
+      <a class="btn-mono" href="https://github.com/Anjali12213443" target="_blank">GitHub ↗</a>
+      <a class="btn-mono" href="https://www.linkedin.com/in/anjali-velu-ramalingam/" target="_blank">LinkedIn ↗</a>
+    </div>
+    <div class="live-stats">
+      <div class="ls"><div class="ls-num" data-count="2">0</div><div class="ls-label">Yrs Exp</div></div>
+      <div class="ls"><div class="ls-num" data-count="6">0</div><div class="ls-label">Projects</div></div>
+      <div class="ls"><div class="ls-num" data-count="17">0</div><div class="ls-label">% Detection ↑</div></div>
+      <div class="ls"><div class="ls-num" data-count="50">0</div><div class="ls-label">Experiments</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div>
+      <div class="chart-label">// model_performance.json</div>
+      <div class="chart-title">Project Model Metrics</div>
+      <div class="chart-sub">Real metrics from production deployments</div>
+      <div class="chart-box" style="height:220px;">
+        <canvas id="heroChart"></canvas>
+      </div>
+    </div>
+    <div>
+      <div class="chart-label">// experience_impact.json</div>
+      <div class="chart-title">Impact at Atos Tech Foundation</div>
+      <div class="chart-sub">Measured outcomes from 2 years of work</div>
+      <div class="chart-box" style="height:160px;">
+        <canvas id="impactChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <span class="marquee-item">Machine Learning</span><span class="msep"> · </span>
+    <span class="marquee-item">MLOps</span><span class="msep"> · </span>
+    <span class="marquee-item">Predictive Maintenance</span><span class="msep"> · </span>
+    <span class="marquee-item">Anomaly Detection</span><span class="msep"> · </span>
+    <span class="marquee-item">Deep Learning</span><span class="msep"> · </span>
+    <span class="marquee-item">NLP · BERT</span><span class="msep"> · </span>
+    <span class="marquee-item">FastAPI · Docker</span><span class="msep"> · </span>
+    <span class="marquee-item">Time-Series</span><span class="msep"> · </span>
+    <span class="marquee-item">Azure · AWS</span><span class="msep"> · </span>
+    <span class="marquee-item">Machine Learning</span><span class="msep"> · </span>
+    <span class="marquee-item">MLOps</span><span class="msep"> · </span>
+    <span class="marquee-item">Predictive Maintenance</span><span class="msep"> · </span>
+    <span class="marquee-item">Anomaly Detection</span><span class="msep"> · </span>
+    <span class="marquee-item">Deep Learning</span><span class="msep"> · </span>
+    <span class="marquee-item">NLP · BERT</span><span class="msep"> · </span>
+    <span class="marquee-item">FastAPI · Docker</span><span class="msep"> · </span>
+    <span class="marquee-item">Time-Series</span><span class="msep"> · </span>
+    <span class="marquee-item">Azure · AWS</span><span class="msep"> · </span>
+  </div>
+</div>
+
+<!-- DATA VIZ SECTION -->
+<section id="dataviz">
+  <div class="wrap">
+    <div class="sec-header reveal">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">Data Dashboard</h2>
+      <div class="sec-rule"></div>
+    </div>
+
+    <!-- ROW 1: 2 charts -->
+    <div class="viz-grid" style="margin-bottom:24px;">
+
+      <div class="viz-card reveal">
+        <div class="vc-label">// anomaly_detection_comparison</div>
+        <div class="vc-title">Anomaly Detection — Model Comparison</div>
+        <div class="vc-sub">SKAB benchmark · 745 readings · 188 ground-truth anomalies</div>
+        <div class="metric-row">
+          <div class="metric-pill"><div class="metric-pill-num">0.976</div><div class="metric-pill-label">Autoencoder AUC</div></div>
+          <div class="metric-pill"><div class="metric-pill-num">1.000</div><div class="metric-pill-label">Recall</div></div>
+          <div class="metric-pill"><div class="metric-pill-num">0.730</div><div class="metric-pill-label">F1 Score</div></div>
+        </div>
+        <div style="height:200px;"><canvas id="anomalyChart"></canvas></div>
+      </div>
+
+      <div class="viz-card reveal">
+        <div class="vc-label">// mlops_pipeline_experiments</div>
+        <div class="vc-title">MLOps Pipeline — Model Comparison</div>
+        <div class="vc-sub">AI4I 2020 dataset · 10,000 records · 3.4% failure rate</div>
+        <div class="metric-row">
+          <div class="metric-pill"><div class="metric-pill-num">0.833</div><div class="metric-pill-label">Best F1</div></div>
+          <div class="metric-pill"><div class="metric-pill-num">0.969</div><div class="metric-pill-label">ROC-AUC</div></div>
+        </div>
+        <div style="height:200px;"><canvas id="mlopsChart"></canvas></div>
+      </div>
+
+    </div>
+
+    <!-- ROW 2: skill bars + radar -->
+    <div class="viz-grid" style="margin-bottom:24px;">
+
+      <div class="viz-card reveal">
+        <div class="vc-label">// skill_proficiency.json</div>
+        <div class="vc-title">Technical Skills — Proficiency</div>
+        <div class="vc-sub">Self-assessed based on project depth and usage frequency</div>
+        <div id="skillBars" style="margin-top:0.5rem;"></div>
+      </div>
+
+      <div class="viz-card reveal">
+        <div class="vc-label">// domain_coverage.json</div>
+        <div class="vc-title">Domain Coverage</div>
+        <div class="vc-sub">Across enterprise work and academic projects</div>
+        <div style="height:260px;"><canvas id="radarChart"></canvas></div>
+      </div>
+
+    </div>
+
+    <!-- ROW 3: NLP + sleep -->
+    <div class="viz-grid-3">
+
+      <div class="viz-card reveal">
+        <div class="vc-label">// nlp_sentiment</div>
+        <div class="vc-title">NLP Sentiment Pipeline</div>
+        <div class="vc-sub">50K IMDb reviews · 2 model approaches</div>
+        <div class="metric-row">
+          <div class="metric-pill"><div class="metric-pill-num">88.5%</div><div class="metric-pill-label">Accuracy</div></div>
+        </div>
+        <div style="height:160px;"><canvas id="nlpChart"></canvas></div>
+      </div>
+
+      <div class="viz-card reveal">
+        <div class="vc-label">// sleep_quality_mae</div>
+        <div class="vc-title">Sleep Quality — Model MAE</div>
+        <div class="vc-sub">NIH All of Us · 15,600+ participants</div>
+        <div class="metric-row">
+          <div class="metric-pill"><div class="metric-pill-num">4.17%</div><div class="metric-pill-label">Best Efficiency MAE</div></div>
+        </div>
+        <div style="height:160px;"><canvas id="sleepChart"></canvas></div>
+      </div>
+
+      <div class="viz-card reveal">
+        <div class="vc-label">// atos_impact_metrics</div>
+        <div class="vc-title">Enterprise Impact</div>
+        <div class="vc-sub">Atos Tech Foundation · 2022–2024</div>
+        <div class="metric-row">
+          <div class="metric-pill"><div class="metric-pill-num">17%</div><div class="metric-pill-label">Detection ↑</div></div>
+        </div>
+        <div style="height:160px;"><canvas id="atosChart"></canvas></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-header reveal">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">About</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm a Data Scientist with <strong>2 years of enterprise experience</strong> at Atos Tech Foundation — building ML models for predictive maintenance and anomaly detection on industrial sensor telemetry. Improved fault detection by <strong>17%</strong>, reduced unplanned downtime by <strong>12%</strong>.</p>
+        <p>I hold an <strong>MS in Data Science &amp; Analytics (GPA 3.93)</strong> with a minor in Artificial Intelligence from Florida Atlantic University, graduated May 2026. Full ML lifecycle — data pipelines, model training, REST API deployment, dashboards.</p>
+        <p>Actively seeking full-time roles in Data Science, ML Engineering, or Data Engineering.</p>
+        <div class="code-block">
+<span class="cm"># anjali_velu_ramalingam.py</span>
+<span class="kw">class</span> DataScientist:
+  name = <span class="str">"Anjali Velu Ramalingam"</span>
+  location = <span class="str">"Delray Beach, FL"</span>
+  experience = <span class="num">2</span>  <span class="cm"># years</span>
+  gpa = <span class="num">3.93</span>
+  degree = <span class="str">"MS Data Science & Analytics"</span>
+  open_to = [<span class="str">"Data Science"</span>, <span class="str">"ML Engineering"</span>,
+             <span class="str">"Data Engineering"</span>]
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="chart-label" style="margin-bottom:0.75rem;">// skill_categories</div>
+        <div id="aboutSkillBars"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="wrap">
+    <div class="sec-header reveal">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">Experience</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="exp-list">
+      <div class="exp-card">
+        <div><div class="exp-period">May 2023 – Jul 2024</div><div class="exp-co">Atos Tech Foundation</div><div class="exp-loc">Chennai, India</div></div>
+        <div class="exp-right">
+          <h3>Data Scientist</h3>
+          <ul>
+            <li>ML models for predictive maintenance &amp; anomaly detection — <span class="exp-hi">17% better fault detection, 12% less downtime.</span></li>
+            <li>Time-series forecasting (ARIMA, gradient boosting) across 5+ systems — <span class="exp-hi">15% lower prediction error.</span></li>
+            <li>Feature engineering across 10+ sensor channels — <span class="exp-hi">F1 improved by up to 9%.</span></li>
+            <li>Preprocessed <span class="exp-hi">2M+ sensor records</span> from Azure Data Lake — cut prep time by 30%.</li>
+            <li>Tracked <span class="exp-hi">50+ MLflow experiments</span> — reduced model selection time by 40%.</li>
+            <li>Delivered 8+ technical reports to engineering and non-technical stakeholders.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="exp-card">
+        <div><div class="exp-period">Jul 2022 – May 2023</div><div class="exp-co">Atos Tech Foundation</div><div class="exp-loc">Chennai, India</div></div>
+        <div class="exp-right">
+          <h3>Junior Data Scientist</h3>
+          <ul>
+            <li>ETL pipelines from <span class="exp-hi">15+ industrial IoT sources</span> — reduced manual prep by 25%.</li>
+            <li>EDA on 10+ datasets with 500K+ records — sensor drift and class imbalance identified.</li>
+            <li>Prototyped 4 ML models — feature refinement <span class="exp-hi">improved precision by 8%.</span></li>
+            <li>Dockerised ML model for AWS staging — <span class="exp-hi">deployment from days to under 2 hours.</span></li>
+            <li>Built 3 Plotly Dash dashboards tracking KPIs across 8 sensor streams.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-header reveal">
+      <span class="sec-num">04</span>
+      <h2 class="sec-title">Projects</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-card proj-card-wide">
+        <div class="proj-num">// 01</div>
+        <h3>End-to-End MLOps Pipeline — Machine Failure Detection</h3>
+        <div class="proj-metric">F1: 0.833 · ROC-AUC: 0.969 · &lt;100ms inference</div>
+        <p>Complete MLOps pipeline on AI4I 2020 dataset (10,000 records). 3 models, 20+ hyperparameter configs tracked in MLflow. Best Random Forest deployed via FastAPI + Uvicorn. Automated drift monitoring with Evidently AI across 14 features.</p>
+        <div class="proj-tags"><span class="ptag">MLflow</span><span class="ptag">FastAPI</span><span class="ptag">Evidently AI</span><span class="ptag">Docker</span><span class="ptag">Random Forest</span></div>
+        <a class="proj-link" href="https://github.com/Anjali12213443/mlops_pipeline" target="_blank">View on GitHub ↗</a>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">// 02</div>
+        <h3>Anomaly Detection Pipeline</h3>
+        <div class="proj-metric">AUC-ROC: 0.976 · Recall: 1.000</div>
+        <p>Z-Score, Isolation Forest &amp; PyTorch Autoencoder on SKAB benchmark. Perfect recall, 188 anomalies detected. Plotly Dash dashboard.</p>
+        <div class="proj-tags"><span class="ptag">PyTorch</span><span class="ptag">Isolation Forest</span><span class="ptag">Plotly Dash</span></div>
+        <a class="proj-link" href="https://github.com/Anjali12213443/anomaly-detection-pipeline" target="_blank">View on GitHub ↗</a>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">// 03</div>
+        <h3>Predictive Maintenance — RUL</h3>
+        <div class="proj-metric">RMSE: 36.69 · R²: 0.705</div>
+        <p>NASA CMAPSS FD001 (20,631 readings). 30+ features. FastAPI + Docker, 3-tier health logic. Sub-200ms inference.</p>
+        <div class="proj-tags"><span class="ptag">XGBoost</span><span class="ptag">FastAPI</span><span class="ptag">Docker</span><span class="ptag">MLflow</span></div>
+        <a class="proj-link" href="https://github.com/Anjali12213443/predictive-maintenance-rul" target="_blank">View on GitHub ↗</a>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">// 04</div>
+        <h3>Sleep Quality Prediction — FAU Hackathon</h3>
+        <div class="proj-metric">Sleep efficiency MAE: 4.17%</div>
+        <p>NIH All of Us Fitbit data (15,600+ participants). BigQuery pipeline, 20+ features. LSTM + Transformer + XGBoost. SHAP + Gradio.</p>
+        <div class="proj-tags"><span class="ptag">LSTM</span><span class="ptag">Transformer</span><span class="ptag">BigQuery</span><span class="ptag">SHAP</span></div>
+        <a class="proj-link" href="https://github.com/Anjali12213443/sleep-quality-prediction-allofus" target="_blank">View on GitHub ↗</a>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">// 05</div>
+        <h3>NLP Sentiment Analysis Pipeline</h3>
+        <div class="proj-metric">88.5% accuracy · 99.3% confidence</div>
+        <p>50,000 IMDb reviews. TF-IDF baseline + fine-tuned BERT via HuggingFace. Live Streamlit app with model comparison.</p>
+        <div class="proj-tags"><span class="ptag">BERT</span><span class="ptag">HuggingFace</span><span class="ptag">Streamlit</span></div>
+        <a class="proj-link" href="https://github.com/Anjali12213443/nlp-sentiment-pipeline" target="_blank">View on GitHub ↗</a>
+      </div>
+      <div class="proj-card">
+        <div class="proj-num">// 06</div>
+        <h3>Ocean Sound Classification</h3>
+        <div class="proj-metric">9 architectures · 67% accuracy</div>
+        <p>9 deep learning architectures for marine species classification — CNN, LSTM, Transformer, VAE/DDPM. Full research report.</p>
+        <div class="proj-tags"><span class="ptag">CNN</span><span class="ptag">PyTorch</span><span class="ptag">VAE</span><span class="ptag">DDPM</span></div>
+        <a class="proj-link" href="https://github.com/Anjali12213443/ocean-sound-classification-deep-learning" target="_blank">View on GitHub ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="wrap">
+    <div class="sec-header reveal">
+      <span class="sec-num">05</span>
+      <h2 class="sec-title">Certifications</h2>
+      <div class="sec-rule"></div>
+    </div>
+    <div class="cert-grid reveal">
+      <div class="cert-card"><div class="cert-icon">☁️</div><h4>AZ-900 Azure Fundamentals</h4><p>Microsoft Azure</p></div>
+      <div class="cert-card"><div class="cert-icon">📊</div><h4>PL-300 Power BI Analyst</h4><p>Microsoft Power BI</p></div>
+      <div class="cert-card"><div class="cert-icon">⚡</div><h4>PL-900 Power Platform</h4><p>Microsoft Power Platform</p></div>
+      <div class="cert-card"><div class="cert-icon">💻</div><h4>SQL &amp; Python Certified</h4><p>HackerRank</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-grid reveal">
+      <div class="contact-main">
+        <div class="contact-tag">// let's_connect()</div>
+        <h2 class="contact-h">Ready to build<br><span>something great?</span></h2>
+        <p class="contact-sub">Open to full-time roles in Data Science, ML Engineering, and Data Engineering. Based in Delray Beach, Florida — open to remote and hybrid.</p>
+        <div class="clinks">
+          <a class="clink" href="mailto:anjalirams2908@gmail.com"><div><div class="clink-label">Email</div><div class="clink-val">anjalirams2908@gmail.com</div></div><span class="clink-arrow">↗</span></a>
+          <a class="clink" href="https://www.linkedin.com/in/anjali-velu-ramalingam/" target="_blank"><div><div class="clink-label">LinkedIn</div><div class="clink-val">anjali-velu-ramalingam</div></div><span class="clink-arrow">↗</span></a>
+          <a class="clink" href="https://github.com/Anjali12213443" target="_blank"><div><div class="clink-label">GitHub</div><div class="clink-val">Anjali12213443</div></div><span class="clink-arrow">↗</span></a>
+        </div>
+      </div>
+      <div class="contact-side">
+        <div class="cs-card"><div class="cs-label">Location</div><div class="cs-val">Delray Beach</div><div class="cs-sub">Florida, USA · Open to remote</div></div>
+        <div class="cs-card"><div class="cs-label">Experience</div><div class="cs-val">2 Years</div><div class="cs-sub">Enterprise ML · Atos Tech Foundation</div></div>
+        <div class="cs-card"><div class="cs-label">Education</div><div class="cs-val">GPA 3.93</div><div class="cs-sub">MS Data Science · FAU · 2026</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Anjali Velu Ramalingam</span>
+  <a href="https://anjali12213443.github.io">anjali12213443.github.io</a>
+</footer>
+
+<script>
+const ACCENT='#1a56db', GREEN='#16a34a', AMBER='#d97706', RED='#dc2626', MID='rgba(122,111,101,0.4)';
+const baseOpts = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false}},
+  scales:{x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{family:'DM Mono',size:10},color:'#7a6f65'}},
+          y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{family:'DM Mono',size:10},color:'#7a6f65'},beginAtZero:true,max:1}}
+};
+
+// HERO chart — model metrics across projects
+new Chart(document.getElementById('heroChart'),{
+  type:'bar',
+  data:{
+    labels:['MLOps\nPipeline','Anomaly\nDetect','Predictive\nMaint.','NLP\nSentiment'],
+    datasets:[
+      {label:'F1 / Accuracy',data:[0.833,0.730,0.705,0.885],backgroundColor:ACCENT+'cc',borderRadius:2},
+      {label:'AUC-ROC',data:[0.969,0.976,0.85,0.91],backgroundColor:GREEN+'88',borderRadius:2}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true,labels:{font:{family:'DM Mono',size:10},color:'#7a6f65',boxWidth:10}}}}
+});
+
+// IMPACT chart
+new Chart(document.getElementById('impactChart'),{
+  type:'bar',
+  data:{
+    labels:['Fault Detection ↑','Downtime ↓','Pred. Error ↓','Data Prep ↓','Model Select ↓'],
+    datasets:[{label:'% Improvement',data:[17,12,15,30,40],backgroundColor:[ACCENT+'cc',GREEN+'cc',AMBER+'cc',ACCENT+'88',GREEN+'88'],borderRadius:2}]
+  },
+  options:{...baseOpts,indexAxis:'y',scales:{x:{...baseOpts.scales?.x,max:50,ticks:{callback:v=>v+'%',font:{family:'DM Mono',size:10},color:'#7a6f65'}},y:{grid:{display:false},ticks:{font:{family:'DM Mono',size:10},color:'#7a6f65'}}}}
+});
+
+// ANOMALY chart — 3 model comparison
+new Chart(document.getElementById('anomalyChart'),{
+  type:'bar',
+  data:{
+    labels:['Z-Score','Isolation Forest','PyTorch Autoencoder'],
+    datasets:[
+      {label:'AUC-ROC',data:[0.630,0.738,0.976],backgroundColor:[RED+'88',AMBER+'88',ACCENT+'cc'],borderRadius:3},
+      {label:'F1 Score',data:[0.142,0.444,0.730],backgroundColor:[RED+'44',AMBER+'44',ACCENT+'66'],borderRadius:3}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true,labels:{font:{family:'DM Mono',size:10},color:'#7a6f65',boxWidth:10}}}}
+});
+
+// MLOPS chart
+new Chart(document.getElementById('mlopsChart'),{
+  type:'bar',
+  data:{
+    labels:['Logistic\nRegression','XGBoost','Random\nForest'],
+    datasets:[
+      {label:'F1',data:[0.72,0.80,0.833],backgroundColor:ACCENT+'cc',borderRadius:3},
+      {label:'ROC-AUC',data:[0.88,0.94,0.969],backgroundColor:GREEN+'88',borderRadius:3}
+    ]
+  },
+  options:{...baseOpts,plugins:{legend:{display:true,labels:{font:{family:'DM Mono',size:10},color:'#7a6f65',boxWidth:10}}}}
+});
+
+// NLP chart
+new Chart(document.getElementById('nlpChart'),{
+  type:'doughnut',
+  data:{
+    labels:['TF-IDF + LR (88.5%)','BERT Fine-tuned'],
+    datasets:[{data:[88.5,91.2],backgroundColor:[ACCENT+'cc',GREEN+'cc'],borderWidth:0}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{family:'DM Mono',size:10},color:'#7a6f65',boxWidth:10}}}}
+});
+
+// SLEEP chart
+new Chart(document.getElementById('sleepChart'),{
+  type:'bar',
+  data:{
+    labels:['Random\nForest','XGBoost','LSTM','Transformer'],
+    datasets:[{label:'Efficiency MAE (%)',data:[4.17,5.2,6.8,5.9],backgroundColor:[ACCENT+'cc',ACCENT+'88',AMBER+'88',GREEN+'88'],borderRadius:3}]
+  },
+  options:{...baseOpts,scales:{...baseOpts.scales,y:{...baseOpts.scales?.y,max:10,ticks:{callback:v=>v+'%',font:{family:'DM Mono',size:10},color:'#7a6f65'}}}}
+});
+
+// ATOS impact donut
+new Chart(document.getElementById('atosChart'),{
+  type:'radar',
+  data:{
+    labels:['Fault Detection','Downtime Reduction','Pred. Accuracy','Data Efficiency','Experiment Speed'],
+    datasets:[{label:'Impact Score',data:[17,12,15,30,40],backgroundColor:ACCENT+'22',borderColor:ACCENT,pointBackgroundColor:ACCENT,borderWidth:2}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(0,0,0,0.08)'},ticks:{display:false},pointLabels:{font:{family:'DM Mono',size:9},color:'#7a6f65'}}},plugins:{legend:{display:false}}}
+});
+
+// RADAR chart — domain coverage
+new Chart(document.getElementById('radarChart'),{
+  type:'radar',
+  data:{
+    labels:['ML Modelling','Data Engineering','MLOps','NLP','Deep Learning','Dashboarding','Cloud / Infra'],
+    datasets:[{label:'Proficiency',data:[90,80,85,82,78,75,70],backgroundColor:ACCENT+'20',borderColor:ACCENT,pointBackgroundColor:ACCENT,borderWidth:2,pointRadius:4}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(0,0,0,0.07)'},ticks:{display:false,stepSize:20},min:0,max:100,pointLabels:{font:{family:'DM Mono',size:10},color:'#7a6f65'}}},plugins:{legend:{display:false}}}
+});
+
+// SKILL BARS — hero section
+const skills=[
+  {name:'Python',val:95},{name:'Machine Learning',val:90},{name:'PyTorch / TF',val:82},
+  {name:'MLflow / MLOps',val:88},{name:'FastAPI / Docker',val:85},{name:'SQL / BigQuery',val:88},
+  {name:'PySpark',val:78},{name:'BERT / NLP',val:80},{name:'Azure / AWS',val:75}
+];
+function buildSkillBars(containerId,data){
+  const el=document.getElementById(containerId);
+  data.forEach(s=>{
+    el.innerHTML+=`<div class="skill-bar-row">
+      <div class="sb-header"><span class="sb-name">${s.name}</span><span class="sb-val">${s.val}%</span></div>
+      <div class="sb-track"><div class="sb-fill" data-val="${s.val}"></div></div>
+    </div>`;
+  });
+}
+buildSkillBars('skillBars',skills);
+buildSkillBars('aboutSkillBars',[
+  {name:'ML Modelling',val:90},{name:'MLOps & Deployment',val:85},{name:'Data Engineering',val:80},
+  {name:'NLP / Deep Learning',val:82},{name:'Cloud (Azure · AWS)',val:75},{name:'Dashboarding',val:78}
+]);
+
+// Animate skill bars on scroll
+const sbObs=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting){
+    x.target.querySelectorAll('.sb-fill').forEach(f=>{f.style.width=f.dataset.val+'%';});
+    sbObs.unobserve(x.target);
+  }});
+},{threshold:0.2});
+document.querySelectorAll('#skillBars,#aboutSkillBars').forEach(el=>sbObs.observe(el));
+
+// COUNTERS
+function animCount(el){
+  const t=+el.dataset.count; let c=0;
+  const iv=setInterval(()=>{ c=Math.min(c+t/50,t); el.textContent=Math.floor(c)+(c>=t?'+':''); if(c>=t)clearInterval(iv); },30);
+}
+const cObs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){animCount(x.target);cObs.unobserve(x.target);}});},{threshold:0.5});
+document.querySelectorAll('[data-count]').forEach(el=>cObs.observe(el));
+
+// REVEAL
+const rObs=new IntersectionObserver(e=>{
+  e.forEach((x,i)=>{if(x.isIntersecting){setTimeout(()=>x.target.classList.add('visible'),i*60);rObs.unobserve(x.target);}});
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>rObs.observe(el));
+
+[...document.querySelectorAll('.exp-card,.proj-card')].forEach((el,i)=>{
+  const o=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){setTimeout(()=>x.target.classList.add('visible'),(i%3)*80);o.unobserve(x.target);}});},{threshold:0.08});
+  o.observe(el);
+});
+
+// NAV
+window.addEventListener('scroll',()=>{document.querySelector('nav');});
+</script>
+</body>
+</html>
